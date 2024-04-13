@@ -34,7 +34,7 @@ def create_database():
 def insert_data(data):
     conn = sqlite3.connect('fantasy_data.db')
     c = conn.cursor()
-    c.executemany("INSERT INTO fantasy_stats VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data)
+    c.executemany("INSERT INTO fantasy_stats (Player, Tm, Pos, Age, G, GS, PassingAtt, PassingYds, PassingTD, RushingAtt, RushingYds, RushingTD, Tgt, Rec, ReceivingYds, ReceivingTD, FantasyPoints) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data)
     conn.commit()
     conn.close()
 
@@ -48,7 +48,7 @@ for row in table.find_all('tr'):
     cols = row.find_all('td')
     if cols:
         cols = [ele.text.strip() for ele in cols]
-        selected_cols = [cols[i] for i in [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 19, 26]]
+        selected_cols = [cols[i] for i in [0, 1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 14, 15, 16, 17, 19, 26]]
         data.append(selected_cols)
 
 data = [row for row in data if row[0] != 'Player']
@@ -60,8 +60,15 @@ for row in data:
             row[i] = float(row[i])
         except ValueError:
             pass  
-        
+
+def get_last_id():
+    conn = sqlite3.connect('fantasy_data.db')
+    c = conn.cursor()
+    c.execute("SELECT MAX(id) FROM fantasy_stats")
+    last_id = c.fetchone()[0]
+    conn.close()
+    return last_id if last_id else 0 
 create_database()
-for i in range(0, len(data), 25):
-    chunk = data[i:i+25]
-    insert_data(chunk)
+last_id = get_last_id()
+new_data = data[last_id:last_id+25]
+insert_data(new_data)
