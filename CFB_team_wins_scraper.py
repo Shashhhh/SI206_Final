@@ -21,20 +21,19 @@ def create_database(table):
      conn.close()
 
 
-
-
 def get_team_wins(table):
     conn = sqlite3.connect('CFB_teams.db')
     c = conn.cursor()
-    last_id = scraper.get_last_id('team_talent')
+    last_id = scraper.get_last_id(table)
     for i in range(last_id, last_id + 25):
         c.execute(f"SELECT * FROM {table} WHERE id=?", (i,))
         team = c.fetchone()
         try:
-            api_response = api_instance.get_team_records(year=year)
+            api_response = api_instance.get_team_records(year=year, team = team)
         except ApiException as e:
             print("Exception when calling GamesApi->get_team_records: %s\n" % e)
 
 data = []
 
 create_database('team_wins')
+get_team_wins('team_talent')

@@ -3,18 +3,14 @@ import cfbd
 from cfbd.rest import ApiException
 from bs4 import BeautifulSoup as BS
 import sqlite3
-configuration = cfbd.Configuration()
-configuration.api_key['Authorization'] = api_key
-configuration.api_key_prefix['Authorization'] = 'Bearer'
-api_instance = cfbd.TeamsApi(cfbd.ApiClient(configuration))
-year = 2023
+
 
 def read_api_key(file_path="api_key.txt"):
     with open(file_path, "r") as file:
         api_key = file.read().strip()
         return api_key
     
-api_key = read_api_key()
+
 
 def create_database(table):
     conn = sqlite3.connect('CFB_teams.db')
@@ -49,6 +45,12 @@ def inserter(data, table):
         new_data = data[last_id:last_id+25]
         insert_data(new_data, table)
 
+api_key = read_api_key()
+configuration = cfbd.Configuration()
+configuration.api_key['Authorization'] = api_key
+configuration.api_key_prefix['Authorization'] = 'Bearer'
+api_instance = cfbd.TeamsApi(cfbd.ApiClient(configuration))
+year = 2023
 
 try:
     api_response = api_instance.get_talent(year=year)
