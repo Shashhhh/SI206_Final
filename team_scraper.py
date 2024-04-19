@@ -9,7 +9,7 @@ def create_database():
     conn = sqlite3.connect('main_db.db')
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS NFL_teams (
-                id INTEGER PRIMARY KEY,
+                Team_id INTEGER PRIMARY KEY,
                 Tm TEXT
                 )''')
     conn.commit()
@@ -18,7 +18,7 @@ def create_database():
 def insert_data(data):
     conn = sqlite3.connect('main_db.db')
     c = conn.cursor()
-    c.executemany("INSERT INTO NFL_teams (Tm) VALUES (?,)", data)
+    c.executemany("INSERT INTO NFL_teams (Tm) VALUES (?)", [(team,) for team in data])
     conn.commit()
     conn.close()
 

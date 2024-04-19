@@ -4,14 +4,49 @@ from bs4 import BeautifulSoup as BS
 import sqlite3
 import json
 import os
-
+nfl_teams = [
+    'ARI',  # Arizona Cardinals
+    'ATL',  # Atlanta Falcons
+    'BAL',  # Baltimore Ravens
+    'BUF',  # Buffalo Bills
+    'CAR',  # Carolina Panthers
+    'CHI',  # Chicago Bears
+    'CIN',  # Cincinnati Bengals
+    'CLE',  # Cleveland Browns
+    'DAL',  # Dallas Cowboys
+    'DEN',  # Denver Broncos
+    'DET',  # Detroit Lions
+    'GNB',   # Green Bay Packers
+    'HOU',  # Houston Texans
+    'IND',  # Indianapolis Colts
+    'JAX',  # Jacksonville Jaguars
+    'KAN',   # Kansas City Chiefs
+    'LVR',   # Las Vegas Raiders
+    'LAC',  # Los Angeles Chargers
+    'LAR',  # Los Angeles Rams
+    'MIA',  # Miami Dolphins
+    'MIN',  # Minnesota Vikings
+    'NWE',   # New England Patriots
+    'NOR',   # New Orleans Saints
+    'NYG',  # New York Giants
+    'NYJ',  # New York Jets
+    'PHI',  # Philadelphia Eagles
+    'PIT',  # Pittsburgh Steelers
+    'SFO',   # San Francisco 49ers
+    'SEA',  # Seattle Seahawks
+    'TAM',   # Tampa Bay Buccaneers
+    'TEN',  # Tennessee Titans
+    'WAS',  # Washington Football Team
+    '2TM',
+    '3TM',
+]
 def create_database():
     conn = sqlite3.connect('main_db.db')
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS fantasy_stats (
                 id INTEGER PRIMARY KEY,
+                Team_id INTEGER,
                 Player TEXT,
-                Tm TEXT,
                 Pos TEXT,
                 Age FLOAT,
                 G FLOAT,
@@ -34,7 +69,7 @@ def create_database():
 def insert_data(data):
     conn = sqlite3.connect('main_db.db')
     c = conn.cursor()
-    c.executemany("INSERT INTO fantasy_stats (Player, Tm, Pos, Age, G, GS, PassingAtt, PassingYds, PassingTD, RushingAtt, RushingYds, RushingTD, Tgt, Rec, ReceivingYds, ReceivingTD, FantasyPoints) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data)
+    c.executemany("INSERT INTO fantasy_stats (Team_id, Player, Pos, Age, G, GS, PassingAtt, PassingYds, PassingTD, RushingAtt, RushingYds, RushingTD, Tgt, Rec, ReceivingYds, ReceivingTD, FantasyPoints) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data)
     conn.commit()
     conn.close()
 
@@ -58,7 +93,12 @@ for row in table.find_all('tr'):
     if cols:
         cols = [ele.text.strip() for ele in cols]
         selected_cols = [cols[i] for i in [0, 1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 14, 15, 16, 17, 19, 26]]
-        data.append(selected_cols)
+        team_col = selected_cols[1]
+        data_cols = []
+        data_cols.append(str(nfl_teams.index(team_col)))
+        selected_cols = [selected_cols[i] for i in range(len(selected_cols)) if i != 1]
+        data_cols.extend(selected_cols);
+        data.append(data_cols)
 
 data = [row for row in data if row[0] != 'Player']
 data = [[ele.split('*')[0].strip() if '*' in ele else ele for ele in row] for row in data]
@@ -72,6 +112,7 @@ for row in data:
 
 create_database()
 last_id = get_last_id()
-new_data = data[last_id:last_id+25]
-insert_data(new_data)
+if (last_id < 200):
+    new_data = data[last_id:last_id+25]
+    insert_data(new_data)
 

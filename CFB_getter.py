@@ -13,7 +13,7 @@ def create_database():
     conn = sqlite3.connect('CFB_teams.db')
     c = conn.cursor()
     c.execute(f'''CREATE TABLE IF NOT EXISTS team_talent (
-                id INTEGER PRIMARY KEY,
+                team_id INTEGER PRIMARY KEY,
                 School TEXT,
                 Talent FLOAT
                 )''')
