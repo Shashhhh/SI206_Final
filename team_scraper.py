@@ -25,7 +25,7 @@ def insert_data(data):
 def get_last_id():
     conn = sqlite3.connect('main_db.db')
     c = conn.cursor()
-    c.execute("SELECT MAX(id) FROM NFL_teams")
+    c.execute("SELECT MAX(Team_id) FROM NFL_teams")
     last_id = c.fetchone()[0]
     conn.close()
     return last_id if last_id else 0 

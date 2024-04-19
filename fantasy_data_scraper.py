@@ -95,7 +95,7 @@ for row in table.find_all('tr'):
         selected_cols = [cols[i] for i in [0, 1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 14, 15, 16, 17, 19, 26]]
         team_col = selected_cols[1]
         data_cols = []
-        data_cols.append(str(nfl_teams.index(team_col)))
+        data_cols.append(str(nfl_teams.index(team_col)+ 1))
         selected_cols = [selected_cols[i] for i in range(len(selected_cols)) if i != 1]
         data_cols.extend(selected_cols);
         data.append(data_cols)
