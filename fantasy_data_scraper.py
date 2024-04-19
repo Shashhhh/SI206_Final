@@ -6,7 +6,7 @@ import json
 import os
 
 def create_database():
-    conn = sqlite3.connect('fantasy_data.db')
+    conn = sqlite3.connect('main_db.db')
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS fantasy_stats (
                 id INTEGER PRIMARY KEY,
@@ -32,13 +32,22 @@ def create_database():
     conn.close()
 
 def insert_data(data):
-    conn = sqlite3.connect('fantasy_data.db')
+    conn = sqlite3.connect('main_db.db')
     c = conn.cursor()
     c.executemany("INSERT INTO fantasy_stats (Player, Tm, Pos, Age, G, GS, PassingAtt, PassingYds, PassingTD, RushingAtt, RushingYds, RushingTD, Tgt, Rec, ReceivingYds, ReceivingTD, FantasyPoints) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data)
     conn.commit()
     conn.close()
 
+def get_last_id():
+    conn = sqlite3.connect('main_db.db')
+    c = conn.cursor()
+    c.execute("SELECT MAX(id) FROM fantasy_stats")
+    last_id = c.fetchone()[0]
+    conn.close()
+    return last_id if last_id else 0 
+
 URL = 'https://www.pro-football-reference.com/years/2023/fantasy.htm'
+
 res = requests.get(URL)
 soup = BS(res.content, 'html.parser')
 table = soup.find('table', {'id': 'fantasy'})
@@ -61,14 +70,8 @@ for row in data:
         except ValueError:
             pass  
 
-def get_last_id():
-    conn = sqlite3.connect('fantasy_data.db')
-    c = conn.cursor()
-    c.execute("SELECT MAX(id) FROM fantasy_stats")
-    last_id = c.fetchone()[0]
-    conn.close()
-    return last_id if last_id else 0 
 create_database()
 last_id = get_last_id()
 new_data = data[last_id:last_id+25]
 insert_data(new_data)
+
