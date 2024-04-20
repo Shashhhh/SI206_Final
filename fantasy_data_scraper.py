@@ -1,9 +1,6 @@
-
 import requests
 from bs4 import BeautifulSoup as BS
 import sqlite3
-import json
-import os
 nfl_teams = [
     'ARI',  # Arizona Cardinals
     'ATL',  # Atlanta Falcons
@@ -66,6 +63,8 @@ def create_database():
     conn.commit()
     conn.close()
 
+#inserts data into database
+#list of tups
 def insert_data(data):
     conn = sqlite3.connect('main_db.db')
     c = conn.cursor()
@@ -88,21 +87,25 @@ soup = BS(res.content, 'html.parser')
 table = soup.find('table', {'id': 'fantasy'})
 data = []
 
+
 for row in table.find_all('tr'):
     cols = row.find_all('td')
     if cols:
         cols = [ele.text.strip() for ele in cols]
-        selected_cols = [cols[i] for i in [0, 1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 14, 15, 16, 17, 19, 26]]
-        team_col = selected_cols[1]
+        selected_cols = [cols[i] for i in [0, 1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 14, 15, 16, 17, 19, 26]] #Only grabs relevant stats
+        team_col = selected_cols[1] #grabs team str
         data_cols = []
-        data_cols.append(str(nfl_teams.index(team_col)+ 1))
+        data_cols.append(str(nfl_teams.index(team_col)+ 1)) #converts team str to int
+        #stitch data back together
         selected_cols = [selected_cols[i] for i in range(len(selected_cols)) if i != 1]
         data_cols.extend(selected_cols);
         data.append(data_cols)
 
+#Cleans the data
 data = [row for row in data if row[0] != 'Player']
 data = [[ele.split('*')[0].strip() if '*' in ele else ele for ele in row] for row in data]
 
+#Converts str data to float values
 for row in data:
     for i in range(3, len(row)):
         try:
