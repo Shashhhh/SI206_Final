@@ -1,10 +1,8 @@
-
 import requests
 from bs4 import BeautifulSoup as BS
 import sqlite3
-import json
-import os
 
+#Creates Database
 def create_database():
     conn = sqlite3.connect('main_db.db')
     c = conn.cursor()
@@ -15,6 +13,8 @@ def create_database():
     conn.commit()
     conn.close()
 
+#Inserts data into table
+#List of teams
 def insert_data(data):
     conn = sqlite3.connect('main_db.db')
     c = conn.cursor()
@@ -22,6 +22,7 @@ def insert_data(data):
     conn.commit()
     conn.close()
 
+#Gets last id
 def get_last_id():
     conn = sqlite3.connect('main_db.db')
     c = conn.cursor()
@@ -38,14 +39,17 @@ soup = BS(res.content, 'html.parser')
 table = soup.find('table', {'id': 'air_yards'})
 data = []
 
+#Grabs team names
 for row in table.find_all('tr'):
     cols = row.find_all('th', {'data-stat': 'team'})
     for col in cols:
         col.find('a')
         data.append(col.text)
-data = data[1:]
+
+data = data[1:] #Throws away header
 create_database()
 last_id = get_last_id()
+
 if last_id == 25:
     new_data = data[last_id:]
 else:
