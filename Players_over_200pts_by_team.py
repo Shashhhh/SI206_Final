@@ -36,38 +36,50 @@ team_colors = {
     'Washington Commanders': '#773141'  # Washington Burgundy
 }
 
-conn = sqlite3.connect('Main_db.db')
-c = conn.cursor()
+def plot_players_by_team():
+    """
+    Plot the number of players with Fantasy Points > 200 for each NFL team.
 
-c.execute('''
-    SELECT NFL_teams.Tm AS Team_name, COUNT(*) AS num_players_over_200
-    FROM NFL_teams
-    INNER JOIN fantasy_stats ON NFL_teams.Team_id = fantasy_stats.Team_id
-    WHERE fantasy_stats.FantasyPoints > 200
-    GROUP BY NFL_teams.Tm
-''')
+    This function retrieves data from the SQLite database 'Main_db.db', counts the number of players 
+    with Fantasy Points > 200 for each NFL team, and plots the results using matplotlib.
 
-results = c.fetchall()
+    Returns:
+    - None
+    """
+    conn = sqlite3.connect('Main_db.db')
+    c = conn.cursor()
 
-c.close()
-conn.close()
+    c.execute('''
+        SELECT NFL_teams.Tm AS Team_name, COUNT(*) AS num_players_over_200
+        FROM NFL_teams
+        INNER JOIN fantasy_stats ON NFL_teams.Team_id = fantasy_stats.Team_id
+        WHERE fantasy_stats.FantasyPoints > 200
+        GROUP BY NFL_teams.Tm
+    ''')
 
-teams = [row[0] for row in results]
-num_players = [row[1] for row in results]
+    results = c.fetchall()
 
-plt.figure(figsize=(14, 8))
-bars = plt.bar(teams, num_players)
+    c.close()
+    conn.close()
 
-for bar, team in zip(bars, teams):
-    bar.set_color(team_colors.get(team, 'gray'))  
+    teams = [row[0] for row in results]
+    num_players = [row[1] for row in results]
 
-plt.xlabel('Team')
-plt.ylabel('Number of Players with Fantasy Points > 200')
-plt.title('Number of Players on Each Team with Fantasy Points > 200')
+    plt.figure(figsize=(14, 8))
+    bars = plt.bar(teams, num_players)
 
-for bar, num in zip(bars, num_players):
-    plt.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.05, num, ha='center', va='bottom')
+    for bar, team in zip(bars, teams):
+        bar.set_color(team_colors.get(team, 'gray'))  
 
-plt.xticks(rotation=90)
-plt.tight_layout()
-plt.show()
+    plt.xlabel('Team')
+    plt.ylabel('Number of Players with Fantasy Points > 200')
+    plt.title('Number of Players on Each Team with Fantasy Points > 200')
+
+    for bar, num in zip(bars, num_players):
+        plt.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.05, num, ha='center', va='bottom')
+
+    plt.xticks(rotation=90)
+    plt.tight_layout()
+    plt.show()
+
+plot_players_by_team()

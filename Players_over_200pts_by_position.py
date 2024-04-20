@@ -1,40 +1,52 @@
 import sqlite3
 import matplotlib.pyplot as plt
 
+def plot_fantasy_stats():
+    """
+    Plot the number of fantasy players with Fantasy Points > 200 by position.
 
-conn = sqlite3.connect('main_db.db')
-c = conn.cursor()
+    This function retrieves data from the SQLite database 'main_db.db', counts the number of players 
+    by position whose FantasyPoints are greater than 200, normalizes the count by the number of teams
+    for each position, and plots the results using matplotlib.
 
-c.execute('''
-    SELECT Pos, COUNT(*) AS num_players
-    FROM fantasy_stats
-    WHERE FantasyPoints > 200
-    GROUP BY Pos
-''')
+    Returns:
+    - None
+    """
+    conn = sqlite3.connect('main_db.db')
+    c = conn.cursor()
 
-results = c.fetchall()
+    c.execute('''
+        SELECT Pos, COUNT(*) AS num_players
+        FROM fantasy_stats
+        WHERE FantasyPoints > 200
+        GROUP BY Pos
+    ''')
 
-c.close()
-conn.close()
+    results = c.fetchall()
 
-positions = [row[0] for row in results]
-num_players = [row[1] for row in results]
+    c.close()
+    conn.close()
 
-normalized_num_players = []
-for pos, num in zip(positions, num_players):
-    if pos == 'WR':
-        normalized_num_players.append(num / 96)
-    else:
-        normalized_num_players.append(num / 32)
+    positions = [row[0] for row in results]
+    num_players = [row[1] for row in results]
 
-colors = ['blue', 'green', 'red', 'cyan', 'magenta', 'yellow', 'black']
+    normalized_num_players = []
+    for pos, num in zip(positions, num_players):
+        if pos == 'WR':
+            normalized_num_players.append(num / 96)
+        else:
+            normalized_num_players.append(num / 32)
 
-plt.figure(figsize=(10, 6))
-bars = plt.bar(positions, normalized_num_players, color=colors[:len(positions)])
+    colors = ['blue', 'green', 'red', 'cyan', 'magenta', 'yellow', 'black']
 
-plt.xlabel('Position')
-plt.ylabel('Normalized Number of Players with Fantasy Points > 200')
-plt.title('Normalized Number of Fantasy Players with Fantasy Points > 200 by Position')
+    plt.figure(figsize=(10, 6))
+    bars = plt.bar(positions, normalized_num_players, color=colors[:len(positions)])
 
-plt.tight_layout()
-plt.show()
+    plt.xlabel('Position')
+    plt.ylabel('Normalized Number of Players with Fantasy Points > 200')
+    plt.title('Normalized Number of Fantasy Players with Fantasy Points > 200 by Position')
+
+    plt.tight_layout()
+    plt.show()
+
+plot_fantasy_stats()

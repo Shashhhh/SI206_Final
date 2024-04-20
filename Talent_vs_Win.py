@@ -4,6 +4,12 @@ import numpy as np
 from scipy import stats
 
 def fetch_data():
+    """
+    Fetch talent and wins data from the 'CFB_teams' table in the SQLite database.
+
+    Returns:
+    - list of tuples: List of tuples containing talent and wins data.
+    """
     conn = sqlite3.connect('Main_db.db')
     c = conn.cursor()
     c.execute("SELECT Talent, Wins FROM CFB_teams")
@@ -12,6 +18,15 @@ def fetch_data():
     return data
 
 def plot_talent_vs_wins(data):
+    """
+    Plot talent vs wins, and fit a linear regression line.
+
+    Parameters:
+    - data (list of tuples): List of tuples containing talent and wins data.
+    
+    Returns:
+    - None
+    """
     talents = [row[0] for row in data]
     wins = [row[1] for row in data]
 
@@ -30,4 +45,3 @@ def plot_talent_vs_wins(data):
 
 data = fetch_data()
 plot_talent_vs_wins(data)
-
