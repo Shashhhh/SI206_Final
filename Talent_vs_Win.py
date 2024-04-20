@@ -2,6 +2,7 @@ import sqlite3
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
+
 def fetch_data():
     conn = sqlite3.connect('Main_db.db')
     c = conn.cursor()
@@ -26,7 +27,6 @@ def plot_talent_vs_wins(data):
     plt.legend()
     plt.grid(True)
     plt.show()
-
 
 data = fetch_data()
 plot_talent_vs_wins(data)
