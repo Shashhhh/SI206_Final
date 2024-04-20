@@ -33,7 +33,7 @@ team_colors = {
     'Seattle Seahawks': '#69BE28',      # Seahawk Green
     'Tampa Bay Buccaneers': '#D50A0A',  # Buccaneer Red
     'Tennessee Titans': '#0C2340',      # Titan Navy Blue
-    'Washington Football Team': '#773141'  # Washington Burgundy
+    'Washington Commanders': '#773141'  # Washington Burgundy
 }
 
 conn = sqlite3.connect('Main_db.db')
