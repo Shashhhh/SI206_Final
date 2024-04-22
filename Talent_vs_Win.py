@@ -42,6 +42,11 @@ def plot_talent_vs_wins(data):
     plt.legend()
     plt.grid(True)
     plt.show()
+    
+    with open('talent_vs_wins_results.txt', 'w') as file:
+        file.write("Talent\tWins\n")
+        for talent, win in zip(talents, wins):
+            file.write(f"{talent}\t{win}\n")
 
 data = fetch_data()
 plot_talent_vs_wins(data)

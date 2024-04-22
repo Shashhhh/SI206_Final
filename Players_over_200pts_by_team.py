@@ -58,7 +58,12 @@ def plot_players_by_team():
     ''')
 
     results = c.fetchall()
-
+    with open('players_by_team_results.txt', 'w') as file:
+        file.write("Team\tNumber of Players\n")
+        for row in results:
+            team = row[0]
+            num = row[1]
+            file.write(f"{team}\t{num}\n")
     c.close()
     conn.close()
 

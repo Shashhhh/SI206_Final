@@ -1,0 +1,5 @@
+Position	Normalized Number of Players
+QB	0.625
+RB	0.5625
+TE	0.1875
+WR	0.34375

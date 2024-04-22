@@ -23,7 +23,16 @@ def plot_fantasy_stats():
     ''')
 
     results = c.fetchall()
-
+    with open('fantasy_stats_results.txt', 'w') as file:
+        file.write("Position\tNormalized Number of Players\n")
+        for row in results:
+            pos = row[0]
+            num = row[1]
+            if pos == 'WR':
+                normalized_num = num / 96
+            else:
+                normalized_num = num / 32
+            file.write(f"{pos}\t{normalized_num}\n")
     c.close()
     conn.close()
 
